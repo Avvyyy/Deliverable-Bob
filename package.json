@@ -1,0 +1,39 @@
+{
+  "name": "deliverable-bob",
+  "version": "1.0.0",
+  "description": "Are you messy with deadlines like me? Bob is here to keep you organised",
+  "keywords": [
+    "deliverable",
+    "aid",
+    "helps",
+    "the",
+    "scatter-brained"
+  ],
+  "homepage": "https://github.com/Avvyyy/Deliverable-Bob#readme",
+  "bugs": {
+    "url": "https://github.com/Avvyyy/Deliverable-Bob/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Avvyyy/Deliverable-Bob.git"
+  },
+  "license": "ISC",
+  "author": "Favour A. Uzochukwu",
+  "type": "module",
+  "main": "dist/app.js",
+  "scripts": {
+    "dev": "tsx --watch src/app.ts",
+    "build": "tsc",
+    "start": "node dist/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.6.0",
+    "nodemon": "^3.1.14",
+    "tsx": "^4.21.0"
+  }
+}
