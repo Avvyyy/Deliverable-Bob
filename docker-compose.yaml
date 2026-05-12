@@ -11,6 +11,11 @@ services:
     environment:
       - PORT=3000
       - NODE_ENV=production
+      - DATABASE_URL=postgresql://bob:bob_password@db:5432/deliverable_bob?schema=public
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - db
+      - redis
     restart: unless-stopped
     volumes:
       - ./dist:/app/dist
@@ -31,5 +36,13 @@ services:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
 
+  redis:
+    image: redis:7-alpine
+    container_name: deliverable-bob-redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
 volumes:
   postgres_data:
+

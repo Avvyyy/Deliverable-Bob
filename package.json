@@ -28,6 +28,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@google/genai": "^2.1.0",
     "@prisma/client": "^7.8.0",
     "@types/multer": "^2.1.0",
     "@types/pdf-parse": "^1.1.5",
@@ -35,7 +36,9 @@
     "express": "^5.2.1",
     "multer": "^2.1.1",
     "openai": "^6.37.0",
-    "pdf-parse": "^2.4.5"
+    "pdf-parse": "^2.4.5",
+    "pdf-img-convert": "^1.2.1",
+    "tesseract.js": "^7.0.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
