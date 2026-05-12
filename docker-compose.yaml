@@ -18,4 +18,18 @@ services:
       - ./package.json:/app/package.json
       - ./tsconfig.json:/app/tsconfig.json
 
+  db:
+    image: postgres:16-alpine
+    container_name: deliverable-bob-db
+    environment:
+      - POSTGRES_USER=bob
+      - POSTGRES_PASSWORD=bob_password
+      - POSTGRES_DB=deliverable_bob
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
 
+volumes:
+  postgres_data:

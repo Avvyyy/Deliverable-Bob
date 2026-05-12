@@ -1,0 +1,54 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+model Source {
+  id          String   @id @default(uuid())
+  type        String   // 'PDF', 'TEXT', 'CHAT'
+  name        String?  // e.g., 'Math_Assignment.pdf'
+  rawContent  String   @map("raw_content")
+  createdAt   DateTime @default(now()) @map("created_at")
+  tasks       Task[]
+
+  @@map("sources")
+}
+
+model Task {
+  id                   String         @id @default(uuid())
+  sourceId             String         @map("source_id")
+  title                String
+  deadline             DateTime
+  originalDeadlineText String         @map("original_deadline_text")
+  confidenceScore      Float          @map("confidence_score")
+  status               String         @default("PENDING")
+  createdAt            DateTime       @default(now()) @map("created_at")
+  updatedAt            DateTime       @updatedAt @map("updated_at")
+  
+  source               Source         @relation(fields: [sourceId], references: [id])
+  notifications        Notification[]
+
+  @@map("tasks")
+}
+
+model Notification {
+  id           String    @id @default(uuid())
+  taskId       String    @map("task_id")
+  scheduledFor DateTime  @map("scheduled_for")
+  sentAt       DateTime? @map("sent_at")
+  type         String    // 'EMAIL', 'PUSH'
+  
+  task         Task      @relation(fields: [taskId], references: [id])
+
+  @@map("notifications")
+}
+
