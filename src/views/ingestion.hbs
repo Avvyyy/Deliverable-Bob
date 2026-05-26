@@ -1,0 +1,225 @@
+<div>
+    <div class="page-header">
+        <div>
+            <h2 class="title">Add Deadlines</h2>
+            <p class="subtitle">Paste text, upload a PDF, or drop an image — Bob extracts every deadline automatically.</p>
+        </div>
+        <a href="/dashboard" class="btn btn-secondary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            View timeline
+        </a>
+    </div>
+
+    <!-- Status Panel -->
+    <div id="ingestion-status" class="card status-panel" aria-live="polite">
+        <div class="status-line">
+            <div>
+                <div id="status-text" class="status-text">Preparing extraction</div>
+                <div id="status-detail" class="status-detail">Your content is being sent to Bob.</div>
+            </div>
+            <a id="status-link" href="/dashboard" class="btn btn-secondary" style="display: none;">
+                Open timeline
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+        </div>
+        <div class="progress-track">
+            <div id="status-progress" class="progress-fill"></div>
+        </div>
+    </div>
+
+    <!-- Input Cards -->
+    <div class="split-grid">
+
+        <!-- Text -->
+        <section class="card">
+            <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.3rem;">
+                <div style="width:32px;height:32px;border-radius:6px;background:var(--teal-glow);border:1px solid rgba(46,196,176,0.15);display:grid;place-items:center;flex-shrink:0;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                </div>
+                <h3 class="panel-title">Paste text</h3>
+            </div>
+            <p class="panel-desc">Best for emails, LMS announcements, and copied syllabus sections.</p>
+            <form id="text-ingestion-form" action="/api/ingest/text" method="POST">
+                <div class="form-group">
+                    <label for="text">Paste content</label>
+                    <textarea id="text" name="text" rows="6" required placeholder="e.g. The assignment is due next Friday at 11:59 PM…"></textarea>
+                </div>
+                <button type="submit" class="btn" style="width:100%;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    Extract from text
+                </button>
+            </form>
+        </section>
+
+        <!-- PDF -->
+        <section class="card">
+            <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.3rem;">
+                <div style="width:32px;height:32px;border-radius:6px;background:rgba(240,168,50,0.08);border:1px solid rgba(240,168,50,0.15);display:grid;place-items:center;flex-shrink:0;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15h6M9 11h6M9 7h1"/></svg>
+                </div>
+                <h3 class="panel-title">Upload PDF</h3>
+            </div>
+            <p class="panel-desc">Syllabi and assignment sheets. PDFs up to 10 MB accepted.</p>
+            <form id="pdf-ingestion-form" action="/api/ingest/pdf" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="file">PDF document</label>
+                    <div class="file-zone">
+                        <input type="file" id="file" name="file" accept=".pdf" required>
+                        <div class="file-zone-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:100%;height:100%;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        </div>
+                        <div class="file-zone-text"><strong>Click to choose</strong> or drag &amp; drop<br><span style="font-size:0.75rem;color:var(--ink-faint);">.pdf · max 10 MB</span></div>
+                    </div>
+                </div>
+                <button type="submit" class="btn" style="width:100%;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    Extract from PDF
+                </button>
+            </form>
+        </section>
+
+        <!-- Image -->
+        <section class="card">
+            <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.3rem;">
+                <div style="width:32px;height:32px;border-radius:6px;background:rgba(74,222,128,0.07);border:1px solid rgba(74,222,128,0.15);display:grid;place-items:center;flex-shrink:0;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                </div>
+                <h3 class="panel-title">Upload image</h3>
+            </div>
+            <p class="panel-desc">Screenshots, assignment photos, and deadline images. Powered by Gemini vision.</p>
+            <form id="image-ingestion-form" action="/api/ingest/image" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="image-file">Image file</label>
+                    <div class="file-zone">
+                        <input type="file" id="image-file" name="file" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" required>
+                        <div class="file-zone-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:100%;height:100%;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        </div>
+                        <div class="file-zone-text"><strong>Click to choose</strong> or drag &amp; drop<br><span style="font-size:0.75rem;color:var(--ink-faint);">.png .jpg .jpeg .webp</span></div>
+                    </div>
+                </div>
+                <button type="submit" class="btn" style="width:100%;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    Extract from image
+                </button>
+            </form>
+        </section>
+
+    </div>
+</div>
+
+<script>
+    const statusPanel    = document.getElementById("ingestion-status");
+    const statusText     = document.getElementById("status-text");
+    const statusDetail   = document.getElementById("status-detail");
+    const statusProgress = document.getElementById("status-progress");
+    const statusLink     = document.getElementById("status-link");
+
+    // Update filename display when a file is chosen
+    document.querySelectorAll('.file-zone input[type="file"]').forEach(input => {
+        input.addEventListener('change', () => {
+            const zone = input.closest('.file-zone');
+            const label = zone.querySelector('.file-zone-text');
+            if (input.files.length) {
+                label.innerHTML = `<strong style="color:var(--ink)">${input.files[0].name}</strong><br><span style="font-size:0.75rem;color:var(--ink-faint);">${(input.files[0].size/1024).toFixed(0)} KB</span>`;
+            }
+        });
+    });
+
+    const setStatus = (text, detail, mode = "active") => {
+        statusPanel.classList.add("is-visible");
+        statusText.textContent = text;
+        statusDetail.textContent = detail;
+        statusProgress.classList.toggle("is-complete", mode === "complete");
+        statusProgress.classList.toggle("is-failed",  mode === "failed");
+        statusLink.style.display = mode === "complete" ? "inline-flex" : "none";
+    };
+
+    const pollJob = async (jobId) => {
+        const response = await fetch(`/api/ingest/status/${encodeURIComponent(jobId)}`, {
+            headers: { "Accept": "application/json" },
+        });
+        const payload = await response.json();
+        const job = payload.data;
+
+        if (!response.ok || !job) {
+            setStatus("Unable to read job status", payload.message || "Please try again.", "failed");
+            return;
+        }
+
+        if (job.state === "completed") {
+            if (job.result && job.result.extracted === false) {
+                setStatus("No deadline found", job.result.reason || "Bob could not find a clear deadline in that input.", "failed");
+                return;
+            }
+
+            const count = job.result && job.result.extractedCount ? job.result.extractedCount : 0;
+            const skipped = job.result && job.result.skippedCount ? job.result.skippedCount : 0;
+            const detail = skipped > 0
+                ? `${count} deadline${count === 1 ? "" : "s"} added. ${skipped} unclear or past item${skipped === 1 ? "" : "s"} skipped.`
+                : `${count} deadline${count === 1 ? "" : "s"} added to your timeline.`;
+
+            setStatus("Extraction complete", detail, "complete");
+            window.setTimeout(() => { window.location.href = "/dashboard"; }, 900);
+            return;
+        }
+
+        if (job.state === "failed") {
+            setStatus("Extraction failed", job.reason || "Bob could not process that input.", "failed");
+            return;
+        }
+
+        setStatus("Extraction in progress", `Job state: ${job.state} — checking again shortly.`, "active");
+        window.setTimeout(() => pollJob(jobId), 1800);
+    };
+
+    const submitText = async (event) => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        const body = new URLSearchParams(new FormData(form));
+        setStatus("Queueing text", "Sending your pasted content to the extraction queue.");
+        const response = await fetch(form.action, {
+            method: "POST",
+            headers: { "Accept": "application/json", "Content-Type": "application/x-www-form-urlencoded" },
+            body,
+        });
+        const payload = await response.json();
+        if (!response.ok) { setStatus("Text was not queued", payload.message || "Please check and try again.", "failed"); return; }
+        setStatus("Text queued", "Bob is extracting deadlines in the background.");
+        pollJob(payload.data.jobId);
+    };
+
+    const submitPdf = async (event) => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        setStatus("Queueing PDF", "Uploading the document to the extraction queue.");
+        const response = await fetch(form.action, {
+            method: "POST",
+            headers: { "Accept": "application/json" },
+            body: new FormData(form),
+        });
+        const payload = await response.json();
+        if (!response.ok) { setStatus("PDF was not queued", payload.message || "Please check and try again.", "failed"); return; }
+        setStatus("PDF queued", "Bob is extracting deadlines in the background.");
+        pollJob(payload.data.jobId);
+    };
+
+    const submitImage = async (event) => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        setStatus("Queueing image", "Uploading the image to the extraction queue.");
+        const response = await fetch(form.action, {
+            method: "POST",
+            headers: { "Accept": "application/json" },
+            body: new FormData(form),
+        });
+        const payload = await response.json();
+        if (!response.ok) { setStatus("Image was not queued", payload.message || "Please check and try again.", "failed"); return; }
+        setStatus("Image queued", "Bob is reading the image with Gemini in the background.");
+        pollJob(payload.data.jobId);
+    };
+
+    document.getElementById("text-ingestion-form").addEventListener("submit",  submitText);
+    document.getElementById("pdf-ingestion-form").addEventListener("submit",   submitPdf);
+    document.getElementById("image-ingestion-form").addEventListener("submit", submitImage);
+</script>

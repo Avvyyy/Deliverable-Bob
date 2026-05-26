@@ -11,13 +11,25 @@ datasource db {
   provider = "postgresql"
 }
 
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+  sources      Source[]
+
+  @@map("users")
+}
 
 model Source {
   id          String   @id @default(uuid())
+  userId      String   @map("user_id")
   type        String   // 'PDF', 'TEXT', 'CHAT'
   name        String?  // e.g., 'Math_Assignment.pdf'
   rawContent  String   @map("raw_content")
   createdAt   DateTime @default(now()) @map("created_at")
+  
+  user        User     @relation(fields: [userId], references: [id])
   tasks       Task[]
 
   @@map("sources")
@@ -51,4 +63,3 @@ model Notification {
 
   @@map("notifications")
 }
-

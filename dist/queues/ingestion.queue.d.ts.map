@@ -1,0 +1,1 @@
+{"version":3,"file":"ingestion.queue.d.ts","sourceRoot":"","sources":["../../src/queues/ingestion.queue.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,KAAK,EAAE,MAAM,QAAQ,CAAC;AAG/B,QAAA,MAAM,oBAAoB,oBAAoB,CAAC;AAE/C,QAAA,MAAM,cAAc,2CAclB,CAAC;AAEH,OAAO,EAAE,cAAc,EAAE,oBAAoB,EAAE,CAAC"}

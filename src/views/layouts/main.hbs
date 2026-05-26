@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deliverable Bob</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="/styles.css" rel="stylesheet"/>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="brand">
+            <span class="brand-mark">B</span>
+            <span class="brand-name">Deliverable <span>Bob</span></span>
+        </a>
+        <div class="navbar-links">
+            {{#if user}}
+                <a href="/dashboard">Dashboard</a>
+                <a href="/ingestion" class="nav-cta">+ Ingest</a>
+                <a href="/api/auth/logout">Logout</a>
+            {{else}}
+                <a href="/login">Login</a>
+                <a href="/register" class="nav-cta">Get Started</a>
+            {{/if}}
+        </div>
+    </nav>
+    <main class="container">
+        {{{body}}}
+    </main>
+</body>
+</html>

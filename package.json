@@ -23,25 +23,51 @@
   "main": "dist/app.js",
   "scripts": {
     "dev": "tsx --watch src/app.ts",
-    "build": "tsc",
-    "start": "node dist/app.js",
+    "worker": "tsx src/workers/ingestion.worker.ts",
+    "db:push": "prisma db push",
+    "build": "prisma generate && tsc && tsc-alias --resolve-full-paths --resolve-full-extension .js",
+    "start": "tsx src/app.ts",
+    "dev:worker": "tsx --watch src/workers/ingestion.worker.ts",
+    "start:worker": "tsx src/workers/ingestion.worker.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+<<<<<<< Updated upstream
+=======
+    "@google/genai": "^2.1.0",
+    "@prisma/adapter-pg": "^7.8.0",
+>>>>>>> Stashed changes
     "@prisma/client": "^7.8.0",
-    "@types/multer": "^2.1.0",
-    "@types/pdf-parse": "^1.1.5",
+    "bcrypt": "^6.0.0",
+    "bullmq": "^5.58.9",
+    "chrono-node": "^2.9.0",
+    "connect-redis": "^7.1.1",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "express-session": "^1.18.2",
+    "hbs": "^4.2.0",
+    "ioredis": "^5.8.2",
     "multer": "^2.1.1",
+<<<<<<< Updated upstream
     "openai": "^6.37.0",
     "pdf-parse": "^2.4.5"
+=======
+    "pdf-parse": "^2.4.5",
+    "pg": "^8.16.3",
+    "tsx": "^4.21.0"
+>>>>>>> Stashed changes
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/express": "^5.0.6",
+    "@types/express-session": "^1.18.2",
+    "@types/multer": "^2.1.0",
     "@types/node": "^25.6.0",
+    "@types/pdf-parse": "^1.1.5",
+    "@types/pg": "^8.15.6",
     "nodemon": "^3.1.14",
     "prisma": "^7.8.0",
-    "tsx": "^4.21.0"
+    "tsc-alias": "^1.8.16",
+    "typescript": "^5.9.3"
   }
 }

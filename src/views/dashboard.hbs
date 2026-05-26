@@ -1,0 +1,75 @@
+<div>
+    <div class="page-header">
+        <div>
+            <h2 class="title">Your Timeline</h2>
+            <p class="subtitle">Deadlines sorted by due date · source context · same-day conflict alerts</p>
+        </div>
+        <a href="/ingestion" class="btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add deadlines
+        </a>
+    </div>
+
+    {{#if queuedJobId}}
+    <div class="alert">
+        <span class="alert-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </span>
+        Extraction job <code style="font-family: var(--mono); font-size: 0.85em;">{{queuedJobId}}</code> is queued. Refresh in a moment to see results.
+    </div>
+    {{/if}}
+
+    {{#if tasks.length}}
+    <div class="timeline-grid">
+        {{#each tasks}}
+        <article class="card task-card{{#if this.isHighRisk}} risk-high{{/if}}" style="animation-delay: {{@index}}00ms">
+            <div class="task-row">
+                <div>
+                    <h3 class="task-title">{{this.title}}</h3>
+                    <div class="meta-row">
+                        <span class="pill">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            {{this.source.name}}
+                        </span>
+                        <span class="pill pill-teal">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            {{this.confidenceScore}} conf.
+                        </span>
+                        <span class="pill{{#if (eq this.status 'confirmed')}} pill-green{{else if (eq this.status 'pending')}} pill-amber{{/if}}">
+                            {{this.status}}
+                        </span>
+                    </div>
+                </div>
+                <div class="date-block">
+                    <div class="date-main">{{this.deadlineStr}}</div>
+                    <div class="date-sub">"{{this.originalDeadlineText}}"</div>
+                </div>
+            </div>
+
+            {{#if this.isHighRisk}}
+            <div class="conflict">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                <div>
+                    {{#each this.conflicts}}
+                    <div>{{this}}</div>
+                    {{/each}}
+                </div>
+            </div>
+            {{/if}}
+        </article>
+        {{/each}}
+    </div>
+
+    {{else}}
+    <div class="card empty-state">
+        <div class="empty-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <p>No deadlines tracked yet. Ingest a syllabus, email, or PDF to get started.</p>
+        <a href="/ingestion" class="btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Ingest data
+        </a>
+    </div>
+    {{/if}}
+</div>
