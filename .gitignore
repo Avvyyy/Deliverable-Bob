@@ -3,5 +3,6 @@ node_modules
 *.log
 PLAN.md
 SCHEMA.md
+dist
 
 /src/generated/prisma

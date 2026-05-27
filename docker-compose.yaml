@@ -11,9 +11,6 @@ services:
       - /app/node_modules
     environment:
       - PORT=3000
-<<<<<<< Updated upstream
-      - NODE_ENV=production
-=======
       - NODE_ENV=development
       - SESSION_SECRET=deliverable_bob_secret_key
       - GEMINI_API_KEY=${GEMINI_API_KEY:-}
@@ -26,7 +23,6 @@ services:
       redis:
         condition: service_started
     command: sh -c "npm run db:push && npm run dev"
->>>>>>> Stashed changes
     restart: unless-stopped
 
   worker:
@@ -67,6 +63,13 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: deliverable-bob-redis
+    ports:
+      - "6379:6379"
     restart: unless-stopped
 
 volumes:

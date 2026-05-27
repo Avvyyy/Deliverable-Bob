@@ -26,17 +26,14 @@
     "worker": "tsx src/workers/ingestion.worker.ts",
     "db:push": "prisma db push",
     "build": "prisma generate && tsc && tsc-alias --resolve-full-paths --resolve-full-extension .js",
-    "start": "tsx src/app.ts",
+    "start": "node dist/app.js",
     "dev:worker": "tsx --watch src/workers/ingestion.worker.ts",
-    "start:worker": "tsx src/workers/ingestion.worker.ts",
+    "start:worker": "node dist/workers/ingestion.worker.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-<<<<<<< Updated upstream
-=======
     "@google/genai": "^2.1.0",
     "@prisma/adapter-pg": "^7.8.0",
->>>>>>> Stashed changes
     "@prisma/client": "^7.8.0",
     "bcrypt": "^6.0.0",
     "bullmq": "^5.58.9",
@@ -48,14 +45,9 @@
     "hbs": "^4.2.0",
     "ioredis": "^5.8.2",
     "multer": "^2.1.1",
-<<<<<<< Updated upstream
-    "openai": "^6.37.0",
-    "pdf-parse": "^2.4.5"
-=======
     "pdf-parse": "^2.4.5",
     "pg": "^8.16.3",
     "tsx": "^4.21.0"
->>>>>>> Stashed changes
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
