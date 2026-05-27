@@ -17,7 +17,7 @@ class ViewController {
         return rawError.slice(0, 200);
     }
 
-    async renderDashboard(req: Request, res: Response) {
+    renderDashboard = async (req: Request, res: Response) => {
         try {
             const userId = req.session.userId;
             const timeline = await timelineService.getTimeline(userId);
@@ -38,27 +38,27 @@ class ViewController {
         } catch (error) {
             res.render("dashboard", { error: "Failed to load timeline" });
         }
-    }
+    };
 
-    renderIngestion(req: Request, res: Response) {
+    renderIngestion = (req: Request, res: Response) => {
         res.render("ingestion", { user: { id: req.session.userId } });
-    }
+    };
 
-    renderLogin(req: Request, res: Response) {
+    renderLogin = (req: Request, res: Response) => {
         if (req.session.userId) {
             return res.redirect("/dashboard");
         }
         const error = this.readErrorMessage(req.query.error);
         res.render("login", { error });
-    }
+    };
 
-    renderRegister(req: Request, res: Response) {
+    renderRegister = (req: Request, res: Response) => {
         if (req.session.userId) {
             return res.redirect("/dashboard");
         }
         const error = this.readErrorMessage(req.query.error);
         res.render("register", { error });
-    }
+    };
 }
 
 export const viewController = new ViewController();

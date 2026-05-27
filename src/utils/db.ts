@@ -9,7 +9,21 @@ if (!connectionString) {
 }
 
 const getDatabaseConfig = (url: string) => {
-  const parsedUrl = new URL(url);
+  let parsedUrl: URL;
+  try {
+    parsedUrl = new URL(url);
+  } catch {
+    throw new Error("DATABASE_URL is invalid. Expected a postgresql:// URL.");
+  }
+
+  if (!["postgresql:", "postgres:"].includes(parsedUrl.protocol)) {
+    throw new Error("DATABASE_URL must use postgresql:// protocol.");
+  }
+
+  if (!parsedUrl.hostname) {
+    throw new Error("DATABASE_URL is missing a hostname.");
+  }
+
   const schema = parsedUrl.searchParams.get("schema") || undefined;
   parsedUrl.searchParams.delete("schema");
 
