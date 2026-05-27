@@ -315,6 +315,17 @@ body {
   text-decoration: underline;
 }
 
+.form-error {
+  margin-bottom: 1rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: var(--radius-sm);
+  background: var(--red-bg);
+  border: 1px solid rgba(224, 82, 82, 0.2);
+  color: var(--red);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
 /* ── Panel Title ── */
 .panel-title {
   font-size: 1rem;

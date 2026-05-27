@@ -9,6 +9,14 @@ export const requireAuth = (req: Request, res: Response, next: NextFunction) => 
 };
 
 class ViewController {
+    private readErrorMessage(rawError: unknown): string | null {
+        if (typeof rawError !== "string" || rawError.trim().length === 0) {
+            return null;
+        }
+
+        return rawError.slice(0, 200);
+    }
+
     async renderDashboard(req: Request, res: Response) {
         try {
             const userId = req.session.userId;
@@ -40,14 +48,16 @@ class ViewController {
         if (req.session.userId) {
             return res.redirect("/dashboard");
         }
-        res.render("login");
+        const error = this.readErrorMessage(req.query.error);
+        res.render("login", { error });
     }
 
     renderRegister(req: Request, res: Response) {
         if (req.session.userId) {
             return res.redirect("/dashboard");
         }
-        res.render("register");
+        const error = this.readErrorMessage(req.query.error);
+        res.render("register", { error });
     }
 }
 

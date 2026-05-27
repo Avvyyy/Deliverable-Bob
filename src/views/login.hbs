@@ -9,6 +9,9 @@
         </div>
         <h2 class="title">Welcome back</h2>
         <p class="subtitle">Sign in to your Deliverable Bob workspace.</p>
+        {{#if error}}
+        <p class="form-error">{{error}}</p>
+        {{/if}}
 
         <form action="/api/auth/login" method="POST">
             <div class="form-group">

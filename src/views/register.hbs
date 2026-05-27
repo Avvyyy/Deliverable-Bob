@@ -2,6 +2,9 @@
     <div class="card auth-card">
         <h2 class="title">Register for Bob</h2>
         <p class="muted" style="margin-top: 0; margin-bottom: 1.5rem;">Create a workspace for your syllabi, assignment notes, and extracted deadlines.</p>
+        {{#if error}}
+        <p class="form-error">{{error}}</p>
+        {{/if}}
         <form action="/api/auth/register" method="POST">
             <div class="form-group">
                 <label for="email">Email</label>
