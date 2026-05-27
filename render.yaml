@@ -4,7 +4,7 @@ services:
     runtime: docker
     plan: free
     dockerfilePath: ./Dockerfile
-    dockerCommand: npm run start
+    dockerCommand: npm run start:render-free
     preDeployCommand: npm run db:push
     healthCheckPath: /health
     envVars:
@@ -12,29 +12,6 @@ services:
         value: production
       - key: SESSION_SECRET
         generateValue: true
-      - key: DATABASE_URL
-        fromDatabase:
-          name: deliverable-bob-db
-          property: connectionString
-      - key: REDIS_URL
-        fromService:
-          type: keyvalue
-          name: deliverable-bob-redis
-          property: connectionString
-      - key: GEMINI_API_KEY
-        sync: false
-      - key: GEMINI_MODEL
-        value: gemini-2.5-flash
-
-  - type: worker
-    name: deliverable-bob-worker
-    runtime: docker
-    plan: starter
-    dockerfilePath: ./Dockerfile
-    dockerCommand: npm run start:worker
-    envVars:
-      - key: NODE_ENV
-        value: production
       - key: DATABASE_URL
         fromDatabase:
           name: deliverable-bob-db
