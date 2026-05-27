@@ -18,6 +18,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const require = createRequire(import.meta.url);
 const hbs = require('hbs');
+const sessionStoreMode = (process.env.SESSION_STORE || "memory").toLowerCase();
 
 hbs.registerHelper('eq', (left: unknown, right: unknown) => left === right);
 
@@ -28,20 +29,30 @@ app.set('view options', { layout: 'layouts/main' });
 
 // Static files
 app.use(express.static(path.join(__dirname, '../public')));
+app.set("trust proxy", 1);
 
 // Middleware
 app.use(express.json());
 app.use(urlencoded({ extended: true }));
+const sessionStore =
+    sessionStoreMode === "redis"
+        ? new RedisStore({
+              client: redisConnection,
+              prefix: "deliverable-bob:sess:",
+          })
+        : undefined;
+
 app.use(session({
-    store: new RedisStore({
-        client: redisConnection,
-        prefix: "deliverable-bob:sess:",
-    }),
+    ...(sessionStore ? { store: sessionStore } : {}),
     secret: process.env.SESSION_SECRET || 'deliverable_bob_secret_key',
     resave: false,
     saveUninitialized: false,
     name: "deliverable_bob.sid",
-    cookie: { secure: process.env.SESSION_COOKIE_SECURE === 'true' }
+    cookie: {
+        secure: process.env.SESSION_COOKIE_SECURE === 'true' || process.env.NODE_ENV === "production",
+        httpOnly: true,
+        sameSite: "lax",
+    }
 }));
 
 // API Routes
