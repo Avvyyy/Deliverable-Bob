@@ -28,9 +28,14 @@ const ensureValidRedisUrl = (rawUrl: string) => {
 
 ensureValidRedisUrl(redisUrl);
 
-const redisProtocol = new URL(redisUrl).protocol;
+const parsedUrl = new URL(redisUrl);
+const redisProtocol = parsedUrl.protocol;
 
-const redisConnection = new IORedis(redisUrl, {
+const redisConnection = new IORedis({
+    host: parsedUrl.hostname,
+    port: parsedUrl.port ? parseInt(parsedUrl.port, 10) : 6379,
+    username: parsedUrl.username ? decodeURIComponent(parsedUrl.username) : undefined,
+    password: parsedUrl.password ? decodeURIComponent(parsedUrl.password) : undefined,
     maxRetriesPerRequest: null,
     connectTimeout: 10000,
     keepAlive: 10000,

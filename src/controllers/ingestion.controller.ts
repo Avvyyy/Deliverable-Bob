@@ -27,7 +27,6 @@ class IngestionController {
                 type: "exponential",
                 delay: 5000,
             },
-            removeOnComplete: true,
             removeOnFail: false, // keep failed jobs for debugging
         });
 
@@ -62,7 +61,6 @@ class IngestionController {
                 type: "exponential",
                 delay: 5000,
             },
-            removeOnComplete: true,
             removeOnFail: false, // keep failed jobs for debugging
         });
 
@@ -98,7 +96,6 @@ class IngestionController {
                 type: "exponential",
                 delay: 5000,
             },
-            removeOnComplete: true,
             removeOnFail: false, // keep failed jobs for debugging
         });
 
