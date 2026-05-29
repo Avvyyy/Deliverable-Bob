@@ -15,4 +15,4 @@ RUN npm config set fetch-retries 5 \
 COPY . .
 RUN npm run build
 
-CMD sh -c "npx prisma migrate deploy && node dist/app.js"
+CMD sh -c "node node_modules/prisma/build/index.js db push && node dist/app.js"

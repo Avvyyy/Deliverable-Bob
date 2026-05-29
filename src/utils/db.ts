@@ -35,9 +35,13 @@ const getDatabaseConfig = (url: string) => {
 
 const databaseConfig = getDatabaseConfig(connectionString);
 
+const isRemoteHost = !["localhost", "127.0.0.1", "db"].includes(
+  new URL(databaseConfig.connectionString).hostname
+);
+
 const pool = new Pool({
   connectionString: databaseConfig.connectionString,
-  ...(process.env.NODE_ENV === "production" && {
+  ...(isRemoteHost && {
     ssl: { rejectUnauthorized: false },
   }),
 });
