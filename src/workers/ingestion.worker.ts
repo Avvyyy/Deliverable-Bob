@@ -4,12 +4,25 @@ import { INGESTION_QUEUE_NAME } from "@/queues/ingestion.queue";
 import { processIngestion } from "@/services/ingestion.service";
 import { performance } from "node:perf_hooks";
 
+const isQuotaError = (err: any) => {
+    const msg = err?.message || "";
+    return (
+        msg.includes("429") ||
+        msg.includes("RESOURCE_EXHAUSTED") ||
+        msg.includes("quota") ||
+        msg.includes("exceeded")
+    );
+};
+
 const ingestionWorker = new Worker(
     INGESTION_QUEUE_NAME,
     async (job: Job) => {
         const startedAt = performance.now();
-        const { format, content, fileName, userId, mimeType } = job.data
-        const queuedAt = typeof job.timestamp === "number" ? job.timestamp : Date.now();
+
+        const { format, content, fileName, userId, mimeType } = job.data;
+
+        const queuedAt =
+            typeof job.timestamp === "number" ? job.timestamp : Date.now();
 
         console.info("[WORKER] Job started", {
             id: job.id,
@@ -18,11 +31,14 @@ const ingestionWorker = new Worker(
             queueWaitMs: Date.now() - queuedAt,
             attempt: job.attemptsMade + 1,
         });
-        
+
         let processedContent = content;
-        if ((format === 'pdf' || format === 'image') && typeof content === 'string') {
+
+        if ((format === "pdf" || format === "image") && typeof content === "string") {
             const decodeStartedAt = performance.now();
-            processedContent = Buffer.from(content, 'base64');
+
+            processedContent = Buffer.from(content, "base64");
+
             console.info("[WORKER] base64 decode completed", {
                 id: job.id,
                 format,
@@ -35,17 +51,39 @@ const ingestionWorker = new Worker(
             throw new Error("Missing userId for ingestion job");
         }
 
-        const result = await processIngestion(format, processedContent, userId, fileName, mimeType);
-        console.info("[WORKER] Job processing completed", {
-            id: job.id,
-            format,
-            durationMs: Math.round(performance.now() - startedAt),
-        });
-        return result;
+        try {
+            const result = await processIngestion(
+                format,
+                processedContent,
+                userId,
+                fileName,
+                mimeType
+            );
+
+            console.info("[WORKER] Job processing completed", {
+                id: job.id,
+                format,
+                durationMs: Math.round(performance.now() - startedAt),
+            });
+
+            return result;
+        } catch (error: any) {
+            if (isQuotaError(error)) {
+                console.error("[WORKER] Quota exceeded - failing fast", {
+                    jobId: job.id,
+                    message: error?.message,
+                });
+
+                // This prevents retry spam
+                throw new Error("AI_QUOTA_EXCEEDED");
+            }
+
+            throw error;
+        }
     },
     {
         connection: redisConnection,
-        concurrency: 2, 
+        concurrency: 1,
     }
 );
 
@@ -54,7 +92,12 @@ ingestionWorker.on("completed", (job) => {
 });
 
 ingestionWorker.on("failed", (job, err) => {
-    console.error(`[WORKER] Job ${job?.id} failed: ${err.message}`);
+    const isQuota = err?.message === "AI_QUOTA_EXCEEDED";
+
+    console.error(`[WORKER] Job ${job?.id} failed`, {
+        error: err.message,
+        quotaRelated: isQuota,
+    });
 });
 
 export { ingestionWorker };

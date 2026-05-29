@@ -22,12 +22,13 @@ class IngestionController {
             content: text,
             userId: userId
         }, {
-            attempts: 5,
+            attempts: 3,
             backoff: {
                 type: "exponential",
                 delay: 5000,
+
             },
-            removeOnFail: false, // keep failed jobs for debugging
+            removeOnFail: false,
         });
 
         if (wantsHtml(req)) {
