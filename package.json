@@ -24,10 +24,10 @@
   "scripts": {
     "dev": "tsx --watch src/app.ts",
     "worker": "tsx src/workers/ingestion.worker.ts",
-    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate deploy",
     "build": "prisma generate && tsc && tsc-alias --resolve-full-paths --resolve-full-extension .js",
     "start": "node dist/app.js",
-    "start:render-free": "sh -c \"npm run db:push && (node dist/workers/ingestion.worker.js & node dist/app.js)\"",
+    "start:render-free": "sh -c \"npm run db:migrate && (node dist/workers/ingestion.worker.js & node dist/app.js)\"",
     "dev:worker": "tsx --watch src/workers/ingestion.worker.ts",
     "start:worker": "node dist/workers/ingestion.worker.js",
     "test": "echo \"Error: no test specified\" && exit 1"
