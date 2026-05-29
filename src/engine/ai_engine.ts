@@ -123,6 +123,7 @@ export class GeminiEngine {
                 systemInstruction,
                 responseMimeType: "application/json",
                 responseSchema: this.getResponseSchema(),
+                thinkingConfig: { thinkingBudget: 0 },
             },
         });
     }
