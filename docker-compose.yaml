@@ -15,8 +15,14 @@ services:
       - SESSION_SECRET=deliverable_bob_secret_key
       - GEMINI_API_KEY=${GEMINI_API_KEY:-}
       - GEMINI_MODEL=${GEMINI_MODEL:-gemini-2.5-flash}
-      - DATABASE_URL=postgresql://deliverable_bob_db_user:TFJsAMZZwAQI5j1icEDlULIeUN1SKySa@dpg-d8bgb7sp3tds73bnrb00-a.oregon-postgres.render.com/deliverable_bob_db
-      - REDIS_URL=rediss://default:kfQpEIKbqgNytrUg7MRsx8cXRBOKVSVSZAzCaCyNINM%3D@deliverable-bob-redis.redis.cache.windows.net:6380
+      - GEMINI_FALLBACK_MODEL=${GEMINI_FALLBACK_MODEL:-gemini-2.5-pro}
+      - DATABASE_URL=postgresql://bob:bob_password@db:5432/deliverable_bob?schema=public
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
     command: sh -c "node node_modules/prisma/build/index.js db push && node dist/app.js"
     restart: unless-stopped
 
@@ -31,9 +37,15 @@ services:
     environment:
       - NODE_ENV=development
       - GEMINI_API_KEY=${GEMINI_API_KEY:-}
-      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-2.5-flash}
-      - DATABASE_URL=postgresql://deliverable_bob_db_user:TFJsAMZZwAQI5j1icEDlULIeUN1SKySa@dpg-d8bgb7sp3tds73bnrb00-a.oregon-postgres.render.com/deliverable_bob_db
-      - REDIS_URL=rediss://default:kfQpEIKbqgNytrUg7MRsx8cXRBOKVSVSZAzCaCyNINM%3D@deliverable-bob-redis.redis.cache.windows.net:6380
+      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-1.5-flash}
+      - GEMINI_FALLBACK_MODEL=${GEMINI_FALLBACK_MODEL:-gemini-2.5-pro}
+      - DATABASE_URL=postgresql://bob:bob_password@db:5432/deliverable_bob?schema=public
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
     command: node dist/workers/ingestion.worker.js
     restart: unless-stopped
 
