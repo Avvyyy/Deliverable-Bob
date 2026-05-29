@@ -5,12 +5,12 @@ const textProcessingService = (format: string, text?: string, name?: string) => 
         case 'text':
             return processTextContent(text!)
         case 'pdf':
-            return processPdfContent(Buffer.from(text!), name ?? "")
+            return processPdfContent(Buffer.from(text!))
     }
 }
 
 const pdfProcessingService = (text: string, name = "") => {
-    return processPdfContent(Buffer.from(text), name);
+    return processPdfContent(Buffer.from(text));
 }
 
 export {

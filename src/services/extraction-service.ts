@@ -1,30 +1,52 @@
+import { PDFParse } from "pdf-parse";
+import { performance } from "node:perf_hooks";
+
 const processTextContent = async (text: string) => {
-    if (!text) return "";
+    if (!text) throw new Error("Text input is empty!");
 
-    text
-        // Remove HTML tags
+    const cleanText = text
         .replace(/<[^>]*>/g, " ")
-
-        // Decode basic HTML entities
         .replace(/&nbsp;/g, " ")
         .replace(/&amp;/g, "&")
         .replace(/&lt;/g, "<")
         .replace(/&gt;/g, ">")
         .replace(/&quot;/g, '"')
         .replace(/&#39;/g, "'")
-
-        // Normalize whitespace
         .replace(/\s+/g, " ")
         .trim();
 
-    if (!text) throw new Error("Text is empty!")
+    if (!cleanText) throw new Error("Processed text is empty!");
 
-    return text;
+    return cleanText;
+};
 
-}
+const processPdfContent = async (buffer: Buffer) => {
+    const startedAt = performance.now();
+    const parser = new PDFParse({ data: buffer });
 
-const processPdfContent = async (buffer: Buffer, name: string) => {
+    try {
+        const result = await parser.getText();
+        const text = result.text?.trim();
+        const durationMs = Math.round(performance.now() - startedAt);
 
-}
+        console.info("[PDF] text extraction completed", {
+            durationMs,
+            bytes: buffer.length,
+            characters: text?.length || 0,
+        });
 
-export { processTextContent, processPdfContent }
+        if (!text || text.length < 20) {
+            throw new Error("No readable text found in PDF. Scanned PDFs are not supported.");
+        }
+
+        return text;
+    } finally {
+        const destroyStartedAt = performance.now();
+        await parser.destroy();
+        console.info("[PDF] parser cleanup completed", {
+            durationMs: Math.round(performance.now() - destroyStartedAt),
+        });
+    }
+};
+
+export { processTextContent, processPdfContent };

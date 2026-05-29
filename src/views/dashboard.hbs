@@ -20,6 +20,19 @@
     {{/if}}
 
     {{#if tasks.length}}
+    <div class="timeline-toolbar">
+        <form action="/dashboard" method="GET" class="toolbar-form">
+            <label for="sort">Sort</label>
+            <select id="sort" name="sort" onchange="this.form.submit()">
+                <option value="asc" {{#if isAscending}}selected{{/if}}>Earliest first</option>
+                <option value="desc" {{#if isDescending}}selected{{/if}}>Latest first</option>
+            </select>
+        </form>
+        <div class="pagination-summary">
+            Page {{pagination.page}} of {{pagination.totalPages}} · {{pagination.total}} deadlines
+        </div>
+    </div>
+
     <div class="timeline-grid">
         {{#each tasks}}
         <article class="card task-card{{#if this.isHighRisk}} risk-high{{/if}}" style="animation-delay: {{@index}}00ms">
@@ -35,7 +48,7 @@
                             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                             {{this.confidenceScore}} conf.
                         </span>
-                        <span class="pill{{#if (eq this.status 'confirmed')}} pill-green{{else if (eq this.status 'pending')}} pill-amber{{/if}}">
+                        <span class="pill{{#if (eq this.status 'CONFIRMED')}} pill-green{{else if (eq this.status 'PENDING')}} pill-amber{{/if}}">
                             {{this.status}}
                         </span>
                     </div>
@@ -43,6 +56,11 @@
                 <div class="date-block">
                     <div class="date-main">{{this.deadlineStr}}</div>
                     <div class="date-sub">"{{this.originalDeadlineText}}"</div>
+                    <form action="/api/timeline/{{this.id}}/delete" method="POST" onsubmit="return confirm('Delete this deadline?');">
+                        <button type="submit" class="btn btn-danger btn-icon" title="Delete deadline" aria-label="Delete deadline">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                        </button>
+                    </form>
                 </div>
             </div>
 
@@ -59,6 +77,32 @@
         </article>
         {{/each}}
     </div>
+
+    <nav class="pagination-nav" aria-label="Deadline pages">
+        {{#if pagination.hasPreviousPage}}
+        <a class="btn btn-secondary" href="/dashboard?sort={{sort}}&page={{pagination.previousPage}}">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            Previous
+        </a>
+        {{else}}
+        <span class="btn btn-secondary is-disabled">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            Previous
+        </span>
+        {{/if}}
+
+        {{#if pagination.hasNextPage}}
+        <a class="btn btn-secondary" href="/dashboard?sort={{sort}}&page={{pagination.nextPage}}">
+            Next
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        {{else}}
+        <span class="btn btn-secondary is-disabled">
+            Next
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </span>
+        {{/if}}
+    </nav>
 
     {{else}}
     <div class="card empty-state">

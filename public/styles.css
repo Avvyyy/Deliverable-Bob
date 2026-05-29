@@ -194,6 +194,30 @@ body {
   box-shadow: none;
 }
 
+.btn-danger {
+  background: var(--red-bg);
+  color: var(--red);
+  border: 1px solid rgba(224, 82, 82, 0.25);
+}
+
+.btn-danger:hover {
+  background: rgba(224, 82, 82, 0.18);
+  color: #ff7373;
+  box-shadow: none;
+}
+
+.btn-icon {
+  width: 2.25rem;
+  min-height: 2.25rem;
+  padding: 0;
+}
+
+.btn.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+  transform: none;
+}
+
 /* ── Forms ── */
 .form-group {
   margin-bottom: 1.1rem;
@@ -351,6 +375,49 @@ body {
 }
 
 /* ── Timeline ── */
+.timeline-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 0.8rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.toolbar-form {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.toolbar-form label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.toolbar-form select {
+  min-height: 2.25rem;
+  padding: 0.35rem 2rem 0.35rem 0.75rem;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+  font-family: var(--font);
+  font-weight: 600;
+}
+
+.pagination-summary {
+  color: var(--ink-soft);
+  font-size: 0.84rem;
+  font-family: var(--mono);
+}
+
 .timeline-grid {
   display: grid;
   gap: 0.75rem;
@@ -456,6 +523,20 @@ body {
   font-family: var(--mono);
   margin-top: 0.3rem;
   font-style: italic;
+}
+
+.date-block form {
+  margin-top: 0.75rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.pagination-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
 }
 
 /* ── Alert ── */
@@ -669,6 +750,13 @@ body {
   .date-block {
     text-align: left;
     min-width: 0;
+  }
+  .date-block form {
+    justify-content: flex-start;
+  }
+  .timeline-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
   }
   .auth-shell {
     margin: 2rem auto;

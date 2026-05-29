@@ -2,48 +2,9 @@ import { geminiEngine } from "@/engine/ai_engine";
 import { saveExtraction } from "@/services/task.service";
 import { OperationFailedError } from "@/response_handler/exceptions";
 import { normalizeDate } from "@/utils/date.util";
-import { PDFParse } from 'pdf-parse';
+import { processPdfContent, processTextContent } from "@/services/extraction-service";
 import type { ExtractedTask } from "@/schema/task.schema";
-
-const processTextContent = async (text: string) => {
-    if (!text) throw new Error("Text input is empty!");
-
-    const cleanText = text
-        // Remove HTML tags
-        .replace(/<[^>]*>/g, " ")
-
-        // Decode basic HTML entities
-        .replace(/&nbsp;/g, " ")
-        .replace(/&amp;/g, "&")
-        .replace(/&lt;/g, "<")
-        .replace(/&gt;/g, ">")
-        .replace(/&quot;/g, '"')
-        .replace(/&#39;/g, "'")
-
-        // Normalize whitespace
-        .replace(/\s+/g, " ")
-        .trim();
-
-    if (!cleanText) throw new Error("Processed text is empty!");
-
-    return cleanText;
-}
-
-const processPdfContent = async (buffer: Buffer) => {
-        const parser = new PDFParse({ data: buffer });
-        try {
-            const result = await parser.getText();
-            if (!result.text || result.text.trim().length < 50) {
-                throw new Error("No readable text found in PDF. Scanned PDFs are not supported in this Docker build.");
-            }
-            return result.text.trim();
-        } catch (error) {
-            throw new Error("Failed to extract readable text from PDF.");
-        }
-        finally {
-            await parser.destroy();
-        }
-}
+import { performance } from "node:perf_hooks";
 
 type IngestionFormat = 'text' | 'pdf' | 'image';
 
@@ -64,16 +25,37 @@ const processIngestion = async (
     fileName?: string,
     mimeType?: string
 ) : Promise<IngestionResult> => {
+    const totalStartedAt = performance.now();
     let extractedText: string;
     let extraction;
+
+    const logStage = (stage: string, startedAt: number, extra: Record<string, unknown> = {}) => {
+        console.info("[INGESTION] stage completed", {
+            stage,
+            format,
+            fileName,
+            durationMs: Math.round(performance.now() - startedAt),
+            ...extra,
+        });
+    };
 
     try {
         if (format === 'pdf') {
             if (!(content instanceof Buffer)) {
                 throw new Error("PDF content must be a Buffer");
             }
+            const pdfStartedAt = performance.now();
             extractedText = await processPdfContent(content);
+            logStage("pdf-text", pdfStartedAt, {
+                bytes: content.length,
+                characters: extractedText.length,
+            });
+
+            const aiStartedAt = performance.now();
             extraction = await geminiEngine.extractDeadlines(extractedText);
+            logStage("ai-deadline-extraction", aiStartedAt, {
+                deadlineCount: extraction.deadlines.length,
+            });
         } else if (format === 'image') {
             if (!(content instanceof Buffer)) {
                 throw new Error("Image content must be a Buffer");
@@ -82,13 +64,28 @@ const processIngestion = async (
                 throw new Error("Image MIME type is required");
             }
             extractedText = `Image upload: ${fileName || "Unnamed image"} (${mimeType})`;
+            const aiStartedAt = performance.now();
             extraction = await geminiEngine.extractDeadlinesFromImage(content, mimeType);
+            logStage("ai-image-extraction", aiStartedAt, {
+                bytes: content.length,
+                deadlineCount: extraction.deadlines.length,
+            });
         } else {
+            const textStartedAt = performance.now();
             extractedText = await processTextContent(content.toString());
+            logStage("text-cleanup", textStartedAt, {
+                characters: extractedText.length,
+            });
+
+            const aiStartedAt = performance.now();
             extraction = await geminiEngine.extractDeadlines(extractedText);
+            logStage("ai-deadline-extraction", aiStartedAt, {
+                deadlineCount: extraction.deadlines.length,
+            });
         }
 
         if (!extraction.hasDeadline || extraction.deadlines.length === 0) {
+            logStage("total", totalStartedAt, { outcome: "no-deadline" });
             return {
                 extracted: false,
                 message: "No deadline found",
@@ -115,6 +112,7 @@ const processIngestion = async (
         }
 
         if (validTasks.length === 0) {
+            logStage("total", totalStartedAt, { outcome: "no-valid-future-deadlines" });
             return {
                 extracted: false,
                 message: "No valid future deadlines found",
@@ -122,6 +120,7 @@ const processIngestion = async (
             };
         }
 
+        const saveStartedAt = performance.now();
         const savedResult = await saveExtraction(
             {
                 type: format.toUpperCase(),
@@ -131,7 +130,12 @@ const processIngestion = async (
             },
             validTasks
         );
+        logStage("database-save", saveStartedAt, {
+            validTaskCount: validTasks.length,
+            skippedCount,
+        });
 
+        logStage("total", totalStartedAt, { outcome: "extracted" });
         return {
             extracted: true,
             source: savedResult,

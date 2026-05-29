@@ -8,7 +8,7 @@ class IngestionController {
     async ingestText(req: Request, res: Response) {
         const { text } = req.body;
         const userId = req.session.userId;
-        
+
         if (!text) {
             return APIResponse.error(res, "Text is required", "4001", 400);
         }
@@ -21,6 +21,14 @@ class IngestionController {
             format: 'text',
             content: text,
             userId: userId
+        }, {
+            attempts: 5,
+            backoff: {
+                type: "exponential",
+                delay: 5000,
+            },
+            removeOnComplete: true,
+            removeOnFail: false, // keep failed jobs for debugging
         });
 
         if (wantsHtml(req)) {
@@ -48,6 +56,14 @@ class IngestionController {
             content: req.file.buffer.toString('base64'),
             fileName: req.file.originalname,
             userId: userId
+        }, {
+            attempts: 5,
+            backoff: {
+                type: "exponential",
+                delay: 5000,
+            },
+            removeOnComplete: true,
+            removeOnFail: false, // keep failed jobs for debugging
         });
 
         if (wantsHtml(req)) {
@@ -76,6 +92,14 @@ class IngestionController {
             fileName: req.file.originalname,
             mimeType: req.file.mimetype,
             userId: userId
+        }, {
+            attempts: 5,
+            backoff: {
+                type: "exponential",
+                delay: 5000,
+            },
+            removeOnComplete: true,
+            removeOnFail: false, // keep failed jobs for debugging
         });
 
         if (wantsHtml(req)) {
