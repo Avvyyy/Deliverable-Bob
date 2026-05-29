@@ -45,6 +45,7 @@ export class AuthController {
       }
       return res.json({ message: "User registered successfully" });
     } catch (error: any) {
+       console.error("[REGISTER ERROR]", error);
       if (wantsHtml(req)) {
         return res.redirect(`/register?error=${toAuthErrorParam("Unable to register right now. Please try again.")}`);
       }
@@ -85,6 +86,7 @@ export class AuthController {
       }
       return res.json({ message: "User logged in successfully" });
     } catch (error: any) {
+      console.error("[LOGIN ERROR]", error);
       if (wantsHtml(req)) {
         return res.redirect(`/login?error=${toAuthErrorParam("Unable to sign in right now. Please try again.")}`);
       }
