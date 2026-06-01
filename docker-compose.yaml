@@ -14,7 +14,7 @@ services:
       - NODE_ENV=development
       - SESSION_SECRET=deliverable_bob_secret_key
       - GEMINI_API_KEY=${GEMINI_API_KEY:-}
-      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-2.5-flash}
+      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-2.5-pro}
       - GEMINI_FALLBACK_MODEL=${GEMINI_FALLBACK_MODEL:-gemini-2.5-pro}
       - DATABASE_URL=postgresql://bob:bob_password@db:5432/deliverable_bob?schema=public
       - REDIS_URL=${REDIS_URL:-redis://redis:6379}
@@ -37,7 +37,7 @@ services:
     environment:
       - NODE_ENV=development
       - GEMINI_API_KEY=${GEMINI_API_KEY:-}
-      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-1.5-flash}
+      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-2.5-pro}
       - GEMINI_FALLBACK_MODEL=${GEMINI_FALLBACK_MODEL:-gemini-2.5-pro}
       - DATABASE_URL=postgresql://bob:bob_password@db:5432/deliverable_bob?schema=public
       - REDIS_URL=${REDIS_URL:-redis://redis:6379}

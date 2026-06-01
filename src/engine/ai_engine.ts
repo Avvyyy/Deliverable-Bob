@@ -3,7 +3,7 @@ import { GoogleGenAI, Type, type Schema } from "@google/genai";
 import type { ExtractedTask, ExtractedTasksResponse } from "@/schema/task.schema";
 
 export class GeminiEngine {
-    private primaryModel = process.env.GEMINI_MODEL || "gemini-1.5-flash";
+    private primaryModel = process.env.GEMINI_MODEL || "gemini-2.5-pro";
     private fallbackModel = process.env.GEMINI_FALLBACK_MODEL || "gemini-2.5-pro";
 
     private client: GoogleGenAI | null = null;
